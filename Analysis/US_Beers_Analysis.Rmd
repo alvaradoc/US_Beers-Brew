@@ -1,0 +1,175 @@
+
+---
+title: "US Beers and Breweries Analysis"
+author: "Alvarado, Cynthia"
+date: "July 1, 2017"
+output:
+  html_document:
+    keep_md: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+## Setup by Import and housekeeping
+
+The two data sets are available in the Data folder as CSV files.  Foremost, an import of the Beers and Brewerey data will load into R for analysis.  After the import, the str() function will give information on the columns and will serve to check that the data was loaded correctly.
+<br>
+
+The non-numeric columns were brought in as <i>factors</i>.  Using the as.character() function, the columns are converted to character type, to make it easier to store as a string vector for graph labels.
+
+
+```{r gather}
+
+#install libraries used
+library(ggplot2)
+library(plyr)
+
+
+#create variables for the url for the data we are utlilizing
+brewery.url <- 'https://raw.githubusercontent.com/alvaradoc/US_Beers-Brew/master/Data/Breweries.csv'
+beer.url <- 'https://raw.githubusercontent.com/alvaradoc/US_Beers-Brew/master/Data/Beers.csv'
+
+#import the data into R
+breweries <- read.csv(brewery.url, header = TRUE)
+beers <- read.csv(beer.url, header = TRUE)
+
+#check the type of data and ensure successful import
+str(breweries)
+
+
+#change data types from factors to characters for breweries
+breweries$Name <- as.character(breweries$Name)
+breweries$City <- as.character(breweries$City)
+breweries$State <- as.character(breweries$State)
+
+#check the data types for beers and ensure successful import
+str(beers)
+
+#change data types from factors to characters for beers
+beers$Name <- as.character(beers$Name)
+beers$Style <- as.character(beers$Style)
+```
+
+## Number of Breweries per State
+
+To get a preliminary overview of breweries across the United States, a summary of the number of breweries per state will be output. Note that there are 51 observations; DC is included on the list as a separate state.
+
+```{r tallyByState}
+
+#table of number of breweries per state
+
+count(breweries, vars = "breweries$State")
+```
+
+Based on the table, Colorado has the most breweries, followed by California, Michigan, Oregon then Texas.
+
+## Combining the datasets for further analysis
+
+Next, we'll merge the data together to do further analysis on the data contained in the beers dataset, and summarize by state. <br>
+
+The column in common which will be use to combine is the <i>Brewery_id</i>.  Note, however, that the column name is mis-matched. The colnames() function can be used to change the column in the Breweries data, so that it is a match. The column name "Name" is used in both datasets.  To avoid having the system rename to Name.x and Name.y, the same function will be applied to rename the "Name" column in breweries.
+
+```{r combine}
+
+#Rename Brew_id to Brewery_Id to merge with Beer dataset
+colnames(breweries)[1] <- "Brewery_id"
+
+#Rename 'Name' in Breweries data to be unique for merge
+colnames(breweries)[2] <- "Brewery"
+
+#merge two datasets into one
+brew.beer <- merge.data.frame(beers, breweries, by = "Brewery_id")
+```
+
+## Check the Merged Data
+
+Checking the first and last six observations, to ensure that the merge is successful.  Note that there are no duplicates.  The breweries appear duplicated, but because there are breweries that produce more than one beer, the beer is unique, while the Brewerey name, city and state appear in more than one row.  That is the result we want.
+
+```{r HT}
+#view first six rows of our combined dataset
+head(brew.beer)
+
+#view last six rows of our combined dataset
+tail(brew.beer)
+```
+
+## Summary of combined Data
+
+Now that the data is combined, and checked that it was successful,a summary can be obtained, taking note of the missing, or "NA" values.  For consistency, the observations with blank ('') beer style will be changed to "NA."
+
+```{r summry}
+
+#we found rows to change for Style
+brew.beer$Style[brew.beer$Style == ''] <- NA
+
+#get the summary for the dataset
+summary(brew.beer)
+```
+
+There are 62 NAs for ABV, 1005 NAs for IBU and finally, 5 NA values for Style, according to the summary.
+
+## Bar chart of Median ABV and IBU by State
+
+Below, are two bar charts for median values of Alcohol by Volume (ABV), and the International Bitterness Unit (IBU), by state.
+
+```{r medians}
+#attach dataset to refer to column names
+attach(brew.beer)
+
+#first, we calculate the Median for both
+medians <- aggregate(brew.beer[, 4:5], by = list(State), FUN = median, na.rm = TRUE, na.action = 0)
+
+#Plot Median ABV by State
+ggplot(data = medians, aes(x = Group.1, y = ABV, width = 0.5)) + geom_bar(stat = "identity", position = "identity") + labs(x = "State", y = "ABV")
+
+#Plot Median IBU by State
+ggplot(data = medians, aes(x = Group.1, y = IBU, width = 0.5)) + geom_bar(stat = "identity", position = "identity") + labs(x = "State", y = "IBU")
+
+```
+<br><br>From the ABV bar graph, there are several states with high median Alcohol content: DC, Kentucky, Michigan, New Mexico and West Virginia.  The lowest median is Utah.<br>
+
+In the IBU chart, only two states show a high median value for bitterness: Maine and West Virginia. Among the states with a low bitterness value are Arizona, Kansas, Wisconsin and Wyoming.<br>
+
+South Dakota did not have any observations for bitterness values, so it has no bar.
+
+## Top ABV and IBU
+
+Now we examine which states have the highest ABV percentage, and IBU value.  From the summary table ouput above, we know that the largest ABV percentage is 0.128 and the largest value for IBU is 138.
+
+```{r max}
+
+#Here, we determine which state has the beer with the highest ABV
+State[which.max(ABV)]
+
+#Conversely, we find the state whose beer has the highest IBU
+State[which.max(IBU)]
+```
+
+Interstingly, although Colorado was not among the states with a high median for ABV, it is the state that produces the beer with highest ABV of 12.8%.  Oregon produces the most bitter beer in the US with an IBU of 138.
+
+## Alcohol Content Summary
+
+For full information purposes, the 6 number summary statistics for Alcohol by Volume is shown below:
+
+```{r ABVsummy}
+#We obtain the summary statistics for ABV
+summary(ABV)
+```
+
+## ABV and IBU relationship
+
+Finally, a plot of Alcohol by Volume and International Bitterness Units will show if there is a correlation.  If there is a correlation, then the plot will show how strong it is, and if it is positive or negative.
+
+```{r corr}
+#Now we seek to find if a relationship between bitterness and alcohol content exist
+ggplot(data = brew.beer, aes(ABV, IBU)) + geom_point() + geom_smooth(method = lm, se = FALSE)
+```
+
+## Conclusion
+
+Based on the data and the scatter plot, there shows a strong positive relationship between the Alcohol content of a beer, to the bitterness unit.  In general, the higher the alcohol content, the more bitter the beer. There were 1,005 observations that were excluded.  These were observations where IBU was not available for a particular beer. <br>
+The plot also shows a high density of beers with an ABV percent of 0.05, and a bitterness unit between 30 to 40.  This did not affect the correlation.  However, it does show that the majority of beers from the U.S. are mildly bitter, with a 5% Alcohol by Volume. 
+<br><br>
