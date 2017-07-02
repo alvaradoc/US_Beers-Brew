@@ -2,12 +2,22 @@
 title: "US Beers and Breweries"
 author: "Alvarado, Cynthia"
 date: "July 1, 2017"
+<<<<<<< HEAD
+output:
+  html_document:
+    keep_md: true
+=======
 output: html_document:
           keep_md: true
+>>>>>>> bedc972652edb55c96f1995ef33932306f0208fa
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+<<<<<<< HEAD
+
+=======
+>>>>>>> bedc972652edb55c96f1995ef33932306f0208fa
 ```
 
 ## Setup by Import and housekeeping
@@ -21,8 +31,13 @@ The non-numeric columns were brought in as <i>factors</i>.  Using the as.charact
 ```{r gather}
 
 #install libraries used
+<<<<<<< HEAD
+library(ggplot2)
+library(plyr)
+=======
 install.packages("ggplot2")
 library(ggplot2)
+>>>>>>> bedc972652edb55c96f1995ef33932306f0208fa
 
 
 #create variables for the url for the data we are utlilizing
@@ -126,7 +141,11 @@ ggplot(data = medians, aes(x = Group.1, y = ABV, width = 0.5)) + geom_bar(stat =
 ggplot(data = medians, aes(x = Group.1, y = IBU, width = 0.5)) + geom_bar(stat = "identity", position = "identity") + labs(x = "State", y = "IBU")
 
 ```
+<<<<<<< HEAD
+<br><br>From the ABV bar graph, there are several states with high median Alcohol content: DC, Kentucky, Michigan, New Mexico and West Virginia.  The lowest median is Utah.<br>
+=======
 From the ABV bar graph, there are several states with high median Alcohol content: DC, Kentucky, Michigan, New Mexico and West Virginia.  The lowest median is Utah.<br>
+>>>>>>> bedc972652edb55c96f1995ef33932306f0208fa
 
 In the IBU chart, only two states show a high median value for bitterness: Maine and West Virginia. Among the states with a low bitterness value are Arizona, Kansas, Wisconsin and Wyoming.<br>
 
@@ -149,7 +168,11 @@ Interstingly, although Colorado was not among the states with a high median for 
 
 ## Alcohol Content Summary
 
+<<<<<<< HEAD
+For full information purposes, the 6 number summary statistics for Alcohol by Volume is shown below:
+=======
 For full information purposes, the 5 number summary for Alcohol by Volume is shown below:
+>>>>>>> bedc972652edb55c96f1995ef33932306f0208fa
 
 ```{r ABVsummy}
 #We obtain the summary statistics for ABV
@@ -158,7 +181,11 @@ summary(ABV)
 
 ## ABV and IBU relationship
 
+<<<<<<< HEAD
+Finally, a plot of Alcohol by Volume and International Bitterness Units will show if there is a correlation.  If there is a correlation, then the plot will show how strong it is, and if it is positive or negative.
+=======
 Finally, a plot of Alcohol by Volume and International Bitterness Units will show if there is a correlation.  If there is a correlation, then the plot will show how strong it is and if it is positive or negative.
+>>>>>>> bedc972652edb55c96f1995ef33932306f0208fa
 
 ```{r corr}
 #Now we seek to find if a relationship between bitterness and alcohol content exist
@@ -167,4 +194,9 @@ ggplot(data = brew.beer, aes(ABV, IBU)) + geom_point() + geom_smooth(method = lm
 
 ## Conclusion
 
+<<<<<<< HEAD
+Based on the data and the scatter plot, there shows a strong positive relationship between the Alcohol content of a beer, to the bitterness unit.  In general, the higher the alcohol content, the more bitter the beer. There were 1,005 observations that were excluded.  These were observations where IBU was not available for a particular beer. <br>
+The plot also shows a high density of beers with an ABV percent of 0.05, and a bitterness unit between 30 to 40.  This did not affect the correlation.  However, it does show that the majority of beers from the U.S. are mild bitter, with a 5% Alcohol by Volume. 
+=======
 Based on the data and the scatter plot, there shows a strong relationship between the Alcohol content of a beer, to the bitterness unit.  In general, the higher the alcohol content, the higher the bitterness of the beer. 
+>>>>>>> bedc972652edb55c96f1995ef33932306f0208fa
