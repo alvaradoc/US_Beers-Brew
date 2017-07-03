@@ -1,4 +1,4 @@
-# US Beers and Brewerey Analysis
+# US Beers and Brewery Analysis
 Using Beers and Brewery data from the US, we will look at the data, and gather a small summary.  Among the summaries, a table for a count of breweries per state will be included, as well as summary statistics for the Alcohol by Volume (ABV) percentage.  From the data, the state with the max ABV percentage will be found, as well as the state with the beer corresponding with the highest International Bitterness Unit (IBU).  <br><br> Graphics will include a bar plot for median ABV and IBU by state. And to examine if there is a relationship between ABV and IBU, a scatter plot, with best fit line.<br><br><br>The data was cleaned and analyzed by the following R version, and the "ggplot2" as wella s the "plyr" libraries:
 
 <pre><code>
